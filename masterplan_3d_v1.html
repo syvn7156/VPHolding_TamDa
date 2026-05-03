@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>VP Holding — Resort 300ha Masterplan 3D Concept v1</title>
+<style>
+  body{margin:0;overflow:hidden;background:#dfeef7;font-family:'Segoe UI',sans-serif;color:#1a3a5c}
+  #info{position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.92);padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);max-width:340px;font-size:13px;z-index:10}
+  #info h1{margin:0 0 4px;font-size:15px}
+  #info p{margin:2px 0;font-size:12px;color:#555}
+  #info kbd{background:#eee;padding:2px 6px;border-radius:4px;border:1px solid #ccc;font-size:11px}
+  #legend{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,0.92);padding:8px 12px;border-radius:8px;font-size:11px;z-index:10}
+  .swatch{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:middle;border:1px solid #999}
+  #controls{position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.92);padding:8px;border-radius:8px;z-index:10}
+  button{margin:2px;padding:6px 10px;border:1px solid #1a3a5c;background:#fff;cursor:pointer;border-radius:4px;font-size:12px}
+  button:hover{background:#1a3a5c;color:#fff}
+</style>
+</head>
+<body>
+
+<div id="info">
+  <h1>VP HOLDING — Resort 300ha</h1>
+  <p><b>Concept v1</b> · 8 Tower + Marina + Tiện ích</p>
+  <p><kbd>Chuột trái</kbd>: xoay · <kbd>Lăn</kbd>: zoom · <kbd>Chuột phải</kbd>: di chuyển</p>
+</div>
+
+<div id="controls">
+  <button onclick="setView('top')">⬆ Top View</button>
+  <button onclick="setView('aerial')">🦅 Aerial</button>
+  <button onclick="setView('marina')">⚓ Marina</button>
+  <button onclick="setView('entry')">🚪 Entry</button>
+</div>
+
+<div id="legend">
+  <div><span class="swatch" style="background:#e67e22"></span>Tower hướng biển 35F (T1-T4)</div>
+  <div><span class="swatch" style="background:#d35400"></span>Tower phía sau 28F (T5-T8)</div>
+  <div><span class="swatch" style="background:#9b59b6"></span>Clubhouse</div>
+  <div><span class="swatch" style="background:#e74c3c"></span>Retail/F&amp;B Plaza</div>
+  <div><span class="swatch" style="background:#16a085"></span>Wellness Center</div>
+  <div><span class="swatch" style="background:#3498db"></span>Hồ bơi / Marina</div>
+</div>
+
+<canvas id="c"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ===== Scene setup =====
+const canvas = document.getElementById('c');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdfeef7);
+scene.fog = new THREE.Fog(0xdfeef7, 800, 2500);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 1, 5000);
+camera.position.set(700, 500, 700);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ===== Lights =====
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+sun.position.set(400, 600, 200);
+sun.castShadow = true;
+sun.shadow.camera.left = -800;
+sun.shadow.camera.right = 800;
+sun.shadow.camera.top = 800;
+sun.shadow.camera.bottom = -800;
+sun.shadow.mapSize.set(1024,1024);
+scene.add(sun);
+
+// ===== Ground (300ha = 1.7km × 1.7km, scaled to 1700 units) =====
+const SITE_W = 1700, SITE_H = 1700;
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(SITE_W, SITE_H),
+  new THREE.MeshLambertMaterial({color:0xc8dba0})
+);
+ground.rotation.x = -Math.PI/2;
+ground.position.y = 0;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// Boundary
+const edges = new THREE.LineSegments(
+  new THREE.EdgesGeometry(new THREE.PlaneGeometry(SITE_W, SITE_H)),
+  new THREE.LineBasicMaterial({color:0x2c3e50})
+);
+edges.rotation.x = -Math.PI/2;
+edges.position.y = 0.5;
+scene.add(edges);
+
+// ===== Sea/water at south (z = +SITE_H/2) =====
+const sea = new THREE.Mesh(
+  new THREE.PlaneGeometry(SITE_W + 600, 600),
+  new THREE.MeshPhongMaterial({color:0x4ba3c7, transparent:true, opacity:0.85, shininess:80})
+);
+sea.rotation.x = -Math.PI/2;
+sea.position.set(0, 0.2, SITE_H/2 + 250);
+scene.add(sea);
+
+// Beach
+const beach = new THREE.Mesh(
+  new THREE.PlaneGeometry(SITE_W - 100, 50),
+  new THREE.MeshLambertMaterial({color:0xf4e8c8})
+);
+beach.rotation.x = -Math.PI/2;
+beach.position.set(0, 0.3, SITE_H/2 - 50);
+scene.add(beach);
+
+// ===== Function to build a building =====
+function building(x, z, w, d, h, color, label){
+  const g = new THREE.Group();
+  const m = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    new THREE.MeshLambertMaterial({color})
+  );
+  m.position.y = h/2;
+  m.castShadow = true; m.receiveShadow = true;
+  g.add(m);
+  // Window pattern (lines)
+  const lineMat = new THREE.LineBasicMaterial({color:0x222, transparent:true, opacity:0.3});
+  for(let y = 8; y < h; y += 8){
+    const geom = new THREE.BufferGeometry();
+    const pts = [
+      new THREE.Vector3(-w/2, y, -d/2), new THREE.Vector3(w/2, y, -d/2),
+      new THREE.Vector3(w/2, y, -d/2), new THREE.Vector3(w/2, y, d/2),
+      new THREE.Vector3(w/2, y, d/2), new THREE.Vector3(-w/2, y, d/2),
+      new THREE.Vector3(-w/2, y, d/2), new THREE.Vector3(-w/2, y, -d/2)
+    ];
+    geom.setFromPoints(pts);
+    g.add(new THREE.LineSegments(geom, lineMat));
+  }
+  g.position.set(x, 0, z);
+  scene.add(g);
+  return g;
+}
+
+// ===== 8 Towers =====
+// Front row (sea-facing, 35F = 105m equivalent)
+building(-650, 280, 80, 80, 105, 0xe67e22, 'T1');
+building(-450, 280, 80, 80, 105, 0xe67e22, 'T2');
+building( 450, 280, 80, 80, 105, 0xe67e22, 'T3');
+building( 650, 280, 80, 80, 105, 0xe67e22, 'T4');
+// Back row (28F = 84m)
+building(-650, -50, 80, 80, 84, 0xd35400, 'T5');
+building(-450, -50, 80, 80, 84, 0xd35400, 'T6');
+building( 450, -50, 80, 80, 84, 0xd35400, 'T7');
+building( 650, -50, 80, 80, 84, 0xd35400, 'T8');
+
+// ===== Central amenities =====
+// Clubhouse (low, wide)
+building(0, 100, 240, 100, 18, 0x9b59b6, 'Clubhouse');
+// Retail plaza north
+building(0, -350, 440, 100, 14, 0xe74c3c, 'Retail');
+// Sports zone
+building(-550, -350, 300, 120, 6, 0x27ae60, 'Sports');
+// Wellness
+building(550, -350, 300, 120, 12, 0x16a085, 'Wellness');
+
+// ===== Pool (kidney-ish ellipse) =====
+const pool = new THREE.Mesh(
+  new THREE.CylinderGeometry(80, 80, 1, 48),
+  new THREE.MeshPhongMaterial({color:0x3498db, shininess:100})
+);
+pool.scale.set(1.2, 1, 0.5);
+pool.position.set(0, 0.5, 220);
+scene.add(pool);
+
+// ===== Marina docks + boats =====
+const marinaGroup = new THREE.Group();
+const dockMat = new THREE.MeshLambertMaterial({color:0x8b6f47});
+for(let i = 0; i < 8; i++){
+  const dock = new THREE.Mesh(new THREE.BoxGeometry(4, 1, 90), dockMat);
+  dock.position.set(-260 + i*70, 0.6, SITE_H/2 + 60);
+  marinaGroup.add(dock);
+  // Boat
+  const boatColor = [0xffffff, 0xfff5a0, 0xc0e8ff][i%3];
+  const boat = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 4, 16),
+    new THREE.MeshLambertMaterial({color: boatColor})
+  );
+  boat.position.set(-260 + i*70 + 14, 1.5, SITE_H/2 + 50 + (i%3)*15);
+  marinaGroup.add(boat);
+}
+scene.add(marinaGroup);
+
+// Marina water area marker
+const marinaWater = new THREE.Mesh(
+  new THREE.PlaneGeometry(640, 100),
+  new THREE.MeshPhongMaterial({color:0x2980b9, transparent:true, opacity:0.6})
+);
+marinaWater.rotation.x = -Math.PI/2;
+marinaWater.position.set(0, 0.4, SITE_H/2 + 60);
+scene.add(marinaWater);
+
+// ===== Roads (simple flat strips) =====
+const roadMat = new THREE.MeshLambertMaterial({color:0x7f8c8d});
+function road(x, z, w, d){
+  const r = new THREE.Mesh(new THREE.PlaneGeometry(w, d), roadMat);
+  r.rotation.x = -Math.PI/2;
+  r.position.set(x, 0.3, z);
+  scene.add(r);
+}
+road(0, -700, 18, 250);   // entry road
+road(0, -250, 1500, 12);  // east-west 1
+road(0, 50, 1500, 12);    // east-west 2
+road(0, 380, 1500, 12);   // east-west 3
+road(-800, 0, 12, 1500);  // north-south west
+road(800, 0, 12, 1500);   // north-south east
+
+// ===== Trees (low-poly cones) =====
+function tree(x, z){
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(1, 1.5, 6),
+    new THREE.MeshLambertMaterial({color:0x6b4423})
+  );
+  trunk.position.set(x, 3, z);
+  scene.add(trunk);
+  const leaf = new THREE.Mesh(
+    new THREE.ConeGeometry(8, 18, 8),
+    new THREE.MeshLambertMaterial({color:0x2d8a4e})
+  );
+  leaf.position.set(x, 14, z);
+  leaf.castShadow = true;
+  scene.add(leaf);
+}
+// Trees scattered along borders + parks
+for(let i = 0; i < 30; i++){
+  tree(-820 + Math.random()*40, -600 + i*45);
+  tree( 820 - Math.random()*40, -600 + i*45);
+}
+// North park
+for(let i = 0; i < 12; i++){
+  tree(-600 + Math.random()*200, -550 + Math.random()*100);
+  tree( 400 + Math.random()*200, -550 + Math.random()*100);
+}
+
+// ===== Entry gate =====
+const gate = new THREE.Mesh(
+  new THREE.BoxGeometry(40, 14, 8),
+  new THREE.MeshLambertMaterial({color:0x34495e})
+);
+gate.position.set(0, 7, -800);
+gate.castShadow = true;
+scene.add(gate);
+
+// ===== Custom Orbit Controls (no external dep) =====
+let theta = Math.PI/4, phi = Math.PI/4, radius = 1400;
+let target = new THREE.Vector3(0, 50, 0);
+let isDragging = false, isPanning = false;
+let lastX = 0, lastY = 0;
+
+function updateCamera(){
+  camera.position.x = target.x + radius * Math.sin(phi) * Math.cos(theta);
+  camera.position.y = target.y + radius * Math.cos(phi);
+  camera.position.z = target.z + radius * Math.sin(phi) * Math.sin(theta);
+  camera.lookAt(target);
+}
+
+canvas.addEventListener('mousedown', e=>{
+  if(e.button === 0){ isDragging = true; }
+  if(e.button === 2){ isPanning = true; }
+  lastX = e.clientX; lastY = e.clientY;
+});
+window.addEventListener('mouseup', ()=>{ isDragging = false; isPanning = false; });
+window.addEventListener('mousemove', e=>{
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  if(isDragging){
+    theta -= dx * 0.005;
+    phi = Math.max(0.05, Math.min(Math.PI/2 - 0.05, phi - dy * 0.005));
+  }
+  if(isPanning){
+    const panSpeed = radius * 0.0015;
+    target.x -= dx * panSpeed * Math.cos(theta);
+    target.z -= dx * panSpeed * Math.sin(theta);
+    target.x += dy * panSpeed * Math.sin(theta);
+    target.z -= dy * panSpeed * Math.cos(theta);
+  }
+  lastX = e.clientX; lastY = e.clientY;
+  updateCamera();
+});
+canvas.addEventListener('contextmenu', e=>e.preventDefault());
+canvas.addEventListener('wheel', e=>{
+  radius = Math.max(150, Math.min(3000, radius + e.deltaY * 0.8));
+  updateCamera();
+  e.preventDefault();
+});
+
+function setView(view){
+  if(view === 'top'){ theta = Math.PI/2; phi = 0.05; radius = 1800; target.set(0,0,0); }
+  if(view === 'aerial'){ theta = Math.PI/4; phi = Math.PI/4; radius = 1400; target.set(0,50,0); }
+  if(view === 'marina'){ theta = Math.PI/2; phi = Math.PI/3; radius = 700; target.set(0,30, SITE_H/2); }
+  if(view === 'entry'){ theta = -Math.PI/2; phi = Math.PI/3; radius = 600; target.set(0,30,-700); }
+  updateCamera();
+}
+
+updateCamera();
+
+// ===== Animate =====
+function animate(){
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

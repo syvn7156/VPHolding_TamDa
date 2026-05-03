@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VP Holding — Phúc Thịnh Tam Đa 3.71 ha · Sa Bàn 3D v2 (PBR + Water + Sky)</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;overflow:hidden;background:#0a1929;font-family:'Segoe UI',sans-serif;color:#fff}
+  #c{display:block;width:100vw;height:100vh}
+  .panel{position:absolute;background:rgba(15,30,55,0.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 14px;font-size:12.5px;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,0.35)}
+  #info{top:14px;left:14px;max-width:340px}
+  #info h1{margin:0 0 4px;font-size:14px;color:#ffd166}
+  #info .sub{font-size:11px;color:#bcd}
+  #info kbd{background:#223;padding:2px 6px;border-radius:3px;border:1px solid #455;font-size:10.5px;color:#e8f0ff}
+  #views{top:14px;right:14px}
+  #views button{display:block;width:100%;margin:3px 0;padding:7px 12px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;border-radius:5px;font-size:12px;text-align:left;transition:all .15s}
+  #views button:hover{background:#ffd166;color:#0a1929;border-color:#ffd166}
+  #legend{bottom:80px;left:14px;font-size:11px}
+  .swatch{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:middle;border:1px solid rgba(255,255,255,0.3);border-radius:2px}
+  #time{bottom:14px;left:50%;transform:translateX(-50%);min-width:380px;text-align:center}
+  #time label{display:block;margin-bottom:6px;font-size:11px;color:#bcd}
+  #time input{width:100%;cursor:pointer}
+  #time .vals{display:flex;justify-content:space-between;font-size:10px;color:#8aa;margin-top:4px}
+  #stats{bottom:14px;right:14px;font-size:10.5px;color:#8aa;font-family:monospace}
+  #loading{position:fixed;inset:0;background:#0a1929;display:flex;align-items:center;justify-content:center;color:#ffd166;font-size:16px;z-index:100;flex-direction:column;gap:14px;padding:20px;text-align:center}
+  .spinner{width:42px;height:42px;border:3px solid #233;border-top-color:#ffd166;border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #loadStatus{font-size:12px;color:#bcd;max-width:600px;line-height:1.6;font-family:monospace;text-align:left;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;min-width:400px}
+  .ok{color:#4ade80}.err{color:#f87171}.pending{color:#fbbf24}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <div>Đang tải thư viện 3D... <span style="color:#bcd;font-size:13px">(Loading Three.js + addons)</span></div>
+  <pre id="loadStatus">Khởi động...</pre>
+</div>
+
+<div id="info" class="panel hidden">
+  <h1>🏝️ PHÚC THỊNH TAM ĐA — Sa Bàn 3D v2</h1>
+  <div class="sub">3.71 ha · 8 tháp 30F · Marina Sông Tắc · Long Phước, TP.HCM</div>
+  <div class="sub" style="margin-top:6px">
+    <kbd>Chuột trái</kbd> xoay · <kbd>Lăn</kbd> zoom · <kbd>Phải</kbd> di chuyển
+  </div>
+  <div class="sub" style="margin-top:4px;color:#ffd166">PBR Glass · Wood Texture · Real Water · Sky Shader</div>
+</div>
+
+<div id="views" class="panel hidden">
+  <div style="font-size:10.5px;color:#bcd;margin-bottom:5px">📷 GÓC NHÌN (Camera Views)</div>
+  <button onclick="setView('aerial_sw')">🦅 Aerial từ Tây Nam (v5_01)</button>
+  <button onclick="setView('aerial_top')">⬇ Top Down (v5_03)</button>
+  <button onclick="setView('aerial_e')">⚓ Marina Sông Tắc (Đông)</button>
+  <button onclick="setView('aerial_s')">🛣 Từ Cao Tốc Nam (v5_04)</button>
+  <button onclick="setView('aerial_se_night')">🌙 Night Cinematic (v5_05)</button>
+  <button onclick="setView('ground')">🚶 Mặt đất giữa cụm tháp</button>
+</div>
+
+<div id="legend" class="panel hidden">
+  <div style="font-weight:700;margin-bottom:4px;color:#ffd166">CHÚ THÍCH</div>
+  <div><span class="swatch" style="background:#88c4a8"></span>Tower kính xanh + thanh gỗ (8 × 30F)</div>
+  <div><span class="swatch" style="background:#3aa9d6"></span>Hồ bơi lagoon</div>
+  <div><span class="swatch" style="background:#1a5a7a"></span>Sông Tắc + Marina</div>
+  <div><span class="swatch" style="background:#8b6f47"></span>Cầu tàu gỗ + du thuyền</div>
+  <div><span class="swatch" style="background:#3a6a3a"></span>Cây xanh + công viên</div>
+  <div><span class="swatch" style="background:#5a5a5a"></span>Cao tốc DCT Bắc-Nam</div>
+</div>
+
+<div id="time" class="panel hidden">
+  <label>☀️ Thời gian trong ngày (Time of Day) · <span id="time-label">15:00 chiều</span></label>
+  <input id="time-slider" type="range" min="0" max="100" value="60">
+  <div class="vals">
+    <span>🌅 06:00</span><span>☀️ 12:00</span><span>🌇 18:00</span><span>🌙 22:00</span>
+  </div>
+</div>
+
+<div id="stats" class="panel hidden"><span id="fps">FPS: --</span></div>
+
+<canvas id="c"></canvas>
+
+<script>
+// ============== ROBUST CDN LOADER ==============
+const statusEl = document.getElementById('loadStatus');
+function logStatus(msg, cls) {
+  const line = document.createElement('div');
+  line.className = cls || '';
+  line.textContent = msg;
+  statusEl.appendChild(line);
+}
+
+// LOCAL FIRST — fallback CDN nếu thiếu file
+const SOURCES = [
+  {name: 'Local (./lib/)', base: './lib'},
+  {name: 'jsDelivr CDN',  base: 'https://cdn.jsdelivr.net/npm/three@0.128.0'},
+  {name: 'unpkg CDN',     base: 'https://unpkg.com/three@0.128.0'}
+];
+
+const FILES = [
+  {local: '/three.min.js',     cdn: '/build/three.min.js'},
+  {local: '/OrbitControls.js', cdn: '/examples/js/controls/OrbitControls.js'},
+  {local: '/Water.js',         cdn: '/examples/js/objects/Water.js'},
+  {local: '/Sky.js',           cdn: '/examples/js/objects/Sky.js'}
+];
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload = () => resolve(url);
+    s.onerror = () => reject(url);
+    document.head.appendChild(s);
+  });
+}
+
+async function loadFile(file, srcIdx = 0) {
+  if (srcIdx >= SOURCES.length) throw new Error('Tất cả nguồn đều thất bại cho ' + file.local);
+  const src = SOURCES[srcIdx];
+  const path = srcIdx === 0 ? file.local : file.cdn;
+  const url = src.base + path;
+  try {
+    await loadScript(url);
+    return src.name;
+  } catch (e) {
+    logStatus(`  ⚠ Thất bại ${src.name}, thử nguồn kế tiếp...`, 'pending');
+    return loadFile(file, srcIdx + 1);
+  }
+}
+
+async function loadAll() {
+  for (let i = 0; i < FILES.length; i++) {
+    const f = FILES[i];
+    const fname = f.local.replace('/', '');
+    logStatus(`[${i + 1}/${FILES.length}] Tải ${fname}...`, 'pending');
+    try {
+      const sourceName = await loadFile(f);
+      logStatus(`  ✓ Done (${sourceName})`, 'ok');
+    } catch (e) {
+      logStatus(`  ✗ KHÔNG TẢI ĐƯỢC! Kiểm tra ./lib/ và mạng.`, 'err');
+      logStatus(`  Chi tiết: ${e.message}`, 'err');
+      return;
+    }
+  }
+  logStatus('✓ Tất cả thư viện sẵn sàng. Khởi tạo scene 3D...', 'ok');
+  setTimeout(initScene, 100);
+}
+
+loadAll().catch(err => {
+  logStatus('FATAL: ' + err.message, 'err');
+});
+
+// ============== SCENE INITIALIZATION ==============
+function initScene() {
+const STEP = (n, msg) => {
+  console.log(`[STEP ${n}] ${msg}`);
+  logStatus(`  ▸ ${msg}`, 'pending');
+};
+try {
+STEP(1, 'Bắt đầu init scene');
+
+// Ẩn loading screen ngay lập tức để user thấy canvas (dù còn trống)
+setTimeout(() => {
+  document.getElementById('loading').style.display = 'none';
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('hidden'));
+}, 200);
+
+const canvas = document.getElementById('c');
+STEP(2, 'Tạo Scene + WebGLRenderer');
+const scene = new THREE.Scene();
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, powerPreference:'high-performance'});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.55;
+renderer.outputEncoding = THREE.sRGBEncoding;
+STEP(3, 'Renderer OK · WebGL ' + (renderer.capabilities.isWebGL2 ? '2' : '1'));
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 1, 6000);
+camera.position.set(380, 280, 380);
+
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// ============== ORBIT CONTROLS ==============
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 30;
+controls.maxDistance = 1500;
+controls.maxPolarAngle = Math.PI * 0.495;
+controls.target.set(-20, 30, 0);
+
+// ============== LIGHTING ==============
+const ambient = new THREE.HemisphereLight(0x9bc6e8, 0x3a4a3a, 0.6);
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(0xfff3d6, 1.4);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -300;
+sun.shadow.camera.right = 300;
+sun.shadow.camera.top = 300;
+sun.shadow.camera.bottom = -300;
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 1500;
+sun.shadow.bias = -0.0003;
+scene.add(sun);
+scene.add(sun.target);
+
+// ============== SKY (Hosek-Wilkie) ==============
+const sky = new THREE.Sky();
+sky.scale.setScalar(10000);
+scene.add(sky);
+const skyU = sky.material.uniforms;
+skyU.turbidity.value = 8;
+skyU.rayleigh.value = 2;
+skyU.mieCoefficient.value = 0.005;
+skyU.mieDirectionalG.value = 0.8;
+
+const sunPos = new THREE.Vector3();
+function updateSun(t){
+  // t in [0,1] = time of day. 0/1 = midnight, 0.25=06:00, 0.5=noon, 0.75=18:00
+  // Solar elevation: peaks at noon, zero at sunrise/sunset, negative at night
+  const hourAngle = (t - 0.5) * Math.PI * 2; // 0 at noon
+  const elev = Math.cos(hourAngle); // +1 at noon, -1 at midnight
+  const azim = Math.sin(hourAngle); // 0 noon, +1 evening, -1 morning
+
+  sunPos.set(azim * Math.sqrt(Math.max(0, 1 - elev*elev)), elev, -Math.cos(hourAngle * 0.5)).normalize();
+  // Simpler: elevation directly
+  const phi = Math.acos(THREE.MathUtils.clamp(elev, -1, 1));
+  const theta = Math.PI - hourAngle * 0.5;
+  sunPos.setFromSphericalCoords(1, phi, theta);
+
+  skyU.sunPosition.value.copy(sunPos);
+
+  sun.position.copy(sunPos).multiplyScalar(800);
+  sun.target.position.set(0, 0, 0);
+
+  if (elev > 0.1) {
+    sun.color.setHex(0xfff3d6);
+    sun.intensity = 1.4 * Math.min(1, elev * 2);
+    ambient.intensity = 0.6;
+    renderer.toneMappingExposure = 0.55;
+    skyU.turbidity.value = 8;
+  } else if (elev > -0.1) {
+    sun.color.setHex(0xff9050);
+    sun.intensity = 0.9;
+    ambient.intensity = 0.5;
+    renderer.toneMappingExposure = 0.7;
+    skyU.turbidity.value = 12;
+  } else {
+    sun.color.setHex(0x4060a0);
+    sun.intensity = 0.15;
+    ambient.intensity = 0.25;
+    renderer.toneMappingExposure = 0.9;
+    skyU.turbidity.value = 0.5;
+  }
+}
+
+// ============== PROCEDURAL TEXTURES ==============
+function woodTexture(){
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 1024;
+  const ctx = c.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,256,0);
+  grad.addColorStop(0, '#5a3a1f');
+  grad.addColorStop(0.5, '#7a4f2a');
+  grad.addColorStop(1, '#5a3a1f');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,256,1024);
+  for(let i = 0; i < 40; i++){
+    ctx.strokeStyle = `rgba(${30+Math.random()*30},${20+Math.random()*20},10,${0.3+Math.random()*0.3})`;
+    ctx.lineWidth = 0.5 + Math.random()*1.5;
+    ctx.beginPath();
+    const x = Math.random()*256;
+    ctx.moveTo(x, 0);
+    ctx.bezierCurveTo(x+10, 300, x-10, 700, x+5, 1024);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth = 1;
+  for(let x = 0; x < 256; x += 32){
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1024); ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.encoding = THREE.sRGBEncoding;
+  return tex;
+}
+
+function grassTexture(){
+  const c = document.createElement('canvas');
+  c.width = c.height = 512;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#3a6a3a'; ctx.fillRect(0,0,512,512);
+  for(let i = 0; i < 3000; i++){
+    const x = Math.random()*512, y = Math.random()*512;
+    ctx.fillStyle = `rgba(${40+Math.random()*40},${80+Math.random()*60},${30+Math.random()*30},${0.4+Math.random()*0.3})`;
+    ctx.fillRect(x, y, 1+Math.random()*2, 1+Math.random()*2);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(40, 40);
+  tex.encoding = THREE.sRGBEncoding;
+  return tex;
+}
+
+function asphaltTexture(){
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#2a2a2e'; ctx.fillRect(0,0,256,256);
+  for(let i = 0; i < 1500; i++){
+    ctx.fillStyle = `rgba(${60+Math.random()*40},${60+Math.random()*40},${65+Math.random()*40},${0.3+Math.random()*0.4})`;
+    ctx.fillRect(Math.random()*256, Math.random()*256, 1, 1);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.encoding = THREE.sRGBEncoding;
+  return tex;
+}
+
+function sandTexture(){
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#d4be88'; ctx.fillRect(0,0,256,256);
+  for(let i = 0; i < 2000; i++){
+    ctx.fillStyle = `rgba(${180+Math.random()*40},${160+Math.random()*30},${100+Math.random()*30},${0.3+Math.random()*0.4})`;
+    ctx.fillRect(Math.random()*256, Math.random()*256, 1, 1);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.encoding = THREE.sRGBEncoding;
+  return tex;
+}
+
+// Procedural water normal map (no external dep!)
+function waterNormalTexture(){
+  const c = document.createElement('canvas');
+  c.width = c.height = 512;
+  const ctx = c.getContext('2d');
+  // Generate Perlin-like noise normal map
+  const img = ctx.createImageData(512, 512);
+  for(let y = 0; y < 512; y++){
+    for(let x = 0; x < 512; x++){
+      const i = (y * 512 + x) * 4;
+      // Simple wave pattern
+      const nx = Math.sin(x * 0.05) * Math.cos(y * 0.04) * 0.3
+               + Math.sin(x * 0.12 + y * 0.08) * 0.2
+               + Math.sin(x * 0.25) * 0.1;
+      const ny = Math.cos(x * 0.04) * Math.sin(y * 0.05) * 0.3
+               + Math.cos(x * 0.08 + y * 0.12) * 0.2
+               + Math.cos(y * 0.25) * 0.1;
+      img.data[i] = 128 + nx * 127;     // R = X normal
+      img.data[i+1] = 128 + ny * 127;   // G = Y normal
+      img.data[i+2] = 200;               // B = Z (mostly up)
+      img.data[i+3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+STEP(4, 'Sinh procedural textures');
+const woodTex = woodTexture();
+const grassTex = grassTexture();
+const asphaltTex = asphaltTexture();
+const sandTex = sandTexture();
+const waterNormalMap = waterNormalTexture();
+STEP(5, 'Textures OK');
+
+// ============== MATERIALS (PBR) ==============
+// r128: dùng MeshStandardMaterial (đơn giản, ổn định) thay MeshPhysicalMaterial
+// để tránh edge case với clearcoat/envMap
+const greenGlass = new THREE.MeshStandardMaterial({
+  color: 0x88c4a8,
+  metalness: 0.65,
+  roughness: 0.18,
+  transparent: true,
+  opacity: 0.78,
+  emissive: 0x102218,
+  emissiveIntensity: 0.15
+});
+
+const woodPanel = new THREE.MeshStandardMaterial({
+  map: woodTex,
+  roughness: 0.7,
+  metalness: 0.05,
+  color: 0xc0a878
+});
+woodPanel.map.repeat.set(2, 6);
+
+const concrete = new THREE.MeshStandardMaterial({color: 0xc8c4be, roughness: 0.85, metalness: 0.05});
+const podiumMat = new THREE.MeshStandardMaterial({color: 0xe8d8b8, roughness: 0.7, metalness: 0.1});
+const grassMat = new THREE.MeshStandardMaterial({map: grassTex, roughness: 1});
+const asphaltMat = new THREE.MeshStandardMaterial({map: asphaltTex, roughness: 0.9});
+const sandMat = new THREE.MeshStandardMaterial({map: sandTex, roughness: 1});
+const dockMat = new THREE.MeshStandardMaterial({color: 0x6e4f2e, roughness: 0.7});
+
+// ============== SITE GEOMETRY (Trapezoidal 3.71 ha) ==============
+const SITE = {
+  N: -100, S: 100,
+  NW: -130, NE: 130,
+  SW: -50,  SE: 50
+};
+
+const siteShape = new THREE.Shape();
+siteShape.moveTo(SITE.NW, SITE.N);
+siteShape.lineTo(SITE.NE, SITE.N);
+siteShape.lineTo(SITE.SE, SITE.S);
+siteShape.lineTo(SITE.SW, SITE.S);
+siteShape.lineTo(SITE.NW, SITE.N);
+
+const siteGeom = new THREE.ShapeGeometry(siteShape);
+siteGeom.rotateX(-Math.PI/2);
+const siteGround = new THREE.Mesh(siteGeom, grassMat);
+siteGround.position.y = 0.05;
+siteGround.receiveShadow = true;
+scene.add(siteGround);
+
+const farLand = new THREE.Mesh(
+  new THREE.PlaneGeometry(2000, 2000),
+  new THREE.MeshStandardMaterial({color: 0x6a8a52, roughness: 1})
+);
+farLand.rotation.x = -Math.PI/2;
+farLand.position.y = -0.1;
+farLand.receiveShadow = true;
+scene.add(farLand);
+
+const boundaryPoints = [
+  new THREE.Vector3(SITE.NW, 0.5, SITE.N),
+  new THREE.Vector3(SITE.NE, 0.5, SITE.N),
+  new THREE.Vector3(SITE.SE, 0.5, SITE.S),
+  new THREE.Vector3(SITE.SW, 0.5, SITE.S),
+  new THREE.Vector3(SITE.NW, 0.5, SITE.N),
+];
+const boundary = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints(boundaryPoints),
+  new THREE.LineBasicMaterial({color: 0xffd166})
+);
+scene.add(boundary);
+
+// ============== WATER — Sông Tắc + Lagoon + Kênh ==============
+// LƯU Ý: KHÔNG dùng THREE.Water vì nó tạo WebGLRenderTarget cho phản chiếu
+// → từ file:// browser chặn (security origin error). Dùng MeshPhongMaterial
+// với animated normal map để giả lập sóng + ánh sáng phản chiếu cơ bản.
+function makeWaterMaterial(color, normalScale = 0.4){
+  const normMap = waterNormalMap.clone();
+  normMap.needsUpdate = true;
+  normMap.wrapS = normMap.wrapT = THREE.RepeatWrapping;
+  return new THREE.MeshPhongMaterial({
+    color: color,
+    normalMap: normMap,
+    normalScale: new THREE.Vector2(normalScale, normalScale),
+    shininess: 120,
+    specular: 0xffffff,
+    transparent: true,
+    opacity: 0.88,
+    side: THREE.DoubleSide
+  });
+}
+
+const songTacMat = makeWaterMaterial(0x1a4a6a, 0.6);
+songTacMat.normalMap.repeat.set(8, 24);
+const water = new THREE.Mesh(new THREE.PlaneGeometry(400, 1200), songTacMat);
+water.rotation.x = -Math.PI/2;
+water.position.set(330, 0.3, 0);
+water.userData.isAnimWater = true;
+water.userData.flowSpeed = {x: 0.015, y: 0.005};
+scene.add(water);
+
+const lagoonMat = makeWaterMaterial(0x3aa9d6, 0.3);
+lagoonMat.normalMap.repeat.set(4, 4);
+const lagoon = new THREE.Mesh(new THREE.CircleGeometry(28, 48), lagoonMat);
+lagoon.rotation.x = -Math.PI/2;
+lagoon.position.set(-15, 0.4, 0);
+lagoon.scale.set(1.4, 1, 0.7);
+lagoon.userData.isAnimWater = true;
+lagoon.userData.flowSpeed = {x: 0.008, y: 0.012};
+scene.add(lagoon);
+
+const deck = new THREE.Mesh(
+  new THREE.RingGeometry(28*0.7, 50, 48),
+  new THREE.MeshStandardMaterial({color: 0xe8d8b8, roughness: 0.9})
+);
+deck.rotation.x = -Math.PI/2;
+deck.position.set(-15, 0.35, 0);
+deck.scale.set(1.4, 0.7, 1);
+deck.receiveShadow = true;
+scene.add(deck);
+
+const beach = new THREE.Mesh(new THREE.PlaneGeometry(20, 800), sandMat);
+beach.rotation.x = -Math.PI/2;
+beach.position.set(140, 0.2, 0);
+beach.receiveShadow = true;
+scene.add(beach);
+
+const canalMat = makeWaterMaterial(0x2a5a4a, 0.3);
+canalMat.normalMap.repeat.set(20, 1);
+const canal = new THREE.Mesh(new THREE.PlaneGeometry(900, 18), canalMat);
+canal.rotation.x = -Math.PI/2;
+canal.position.set(0, 0.25, -180);
+canal.userData.isAnimWater = true;
+canal.userData.flowSpeed = {x: 0.03, y: 0};
+scene.add(canal);
+
+// ============== 8 TOWERS ==============
+function makeTower(x, z, name){
+  const g = new THREE.Group();
+  const W = 22, D = 22, H = 105;
+
+  const glassMesh = new THREE.Mesh(new THREE.BoxGeometry(W, H, D), greenGlass);
+  glassMesh.position.y = H/2;
+  glassMesh.castShadow = true; glassMesh.receiveShadow = true;
+  g.add(glassMesh);
+
+  const slabMat = new THREE.LineBasicMaterial({color: 0x2a3a3a, transparent:true, opacity:0.4});
+  for(let y = 3.5; y < H; y += 3.5){
+    const pts = [
+      new THREE.Vector3(-W/2, y, -D/2), new THREE.Vector3(W/2, y, -D/2),
+      new THREE.Vector3(W/2, y, -D/2),  new THREE.Vector3(W/2, y, D/2),
+      new THREE.Vector3(W/2, y, D/2),   new THREE.Vector3(-W/2, y, D/2),
+      new THREE.Vector3(-W/2, y, D/2),  new THREE.Vector3(-W/2, y, -D/2),
+    ];
+    const lg = new THREE.BufferGeometry().setFromPoints(pts);
+    g.add(new THREE.LineSegments(lg, slabMat));
+  }
+
+  for(let i = 0; i < 4; i++){
+    const xPos = -W/2 + (i+0.5)*(W/4);
+    const finN = new THREE.Mesh(new THREE.BoxGeometry(1.2, H, 1.2), woodPanel);
+    finN.position.set(xPos, H/2, -D/2 - 0.6);
+    finN.castShadow = true; g.add(finN);
+    const finS = new THREE.Mesh(new THREE.BoxGeometry(1.2, H, 1.2), woodPanel);
+    finS.position.set(xPos, H/2, D/2 + 0.6);
+    finS.castShadow = true; g.add(finS);
+    const zPos = -D/2 + (i+0.5)*(D/4);
+    const finE = new THREE.Mesh(new THREE.BoxGeometry(1.2, H, 1.2), woodPanel);
+    finE.position.set(W/2 + 0.6, H/2, zPos);
+    finE.castShadow = true; g.add(finE);
+    const finW = new THREE.Mesh(new THREE.BoxGeometry(1.2, H, 1.2), woodPanel);
+    finW.position.set(-W/2 - 0.6, H/2, zPos);
+    finW.castShadow = true; g.add(finW);
+  }
+
+  const crown = new THREE.Mesh(
+    new THREE.BoxGeometry(W+3, 4, D+3),
+    new THREE.MeshStandardMaterial({color: 0x4a7a4a, roughness: 0.8})
+  );
+  crown.position.y = H + 2;
+  crown.castShadow = true;
+  g.add(crown);
+
+  const podium = new THREE.Mesh(
+    new THREE.BoxGeometry(W+8, 12, D+8),
+    podiumMat
+  );
+  podium.position.y = 6;
+  podium.castShadow = true; podium.receiveShadow = true;
+  g.add(podium);
+
+  const lightStrip = new THREE.Mesh(
+    new THREE.BoxGeometry(W+1, H-10, D+1),
+    new THREE.MeshBasicMaterial({color: 0xffd690, transparent: true, opacity: 0})
+  );
+  lightStrip.position.y = H/2 + 5;
+  lightStrip.userData.isNightGlow = true;
+  g.add(lightStrip);
+
+  g.position.set(x, 0, z);
+  g.userData.name = name;
+  scene.add(g);
+  return g;
+}
+
+const towerPositions = [
+  {x: -30, z: -75, n: 'T1'},
+  {x:  10, z: -65, n: 'T2'},
+  {x: -75, z: -50, n: 'T3'},
+  {x: -95, z: -10, n: 'T4'},
+  {x: -95, z:  10, n: 'T5'},
+  {x: -75, z:  50, n: 'T6'},
+  {x: -30, z:  75, n: 'T7'},
+  {x:  10, z:  65, n: 'T8'},
+];
+STEP(6, 'Dựng 8 towers + materials');
+towerPositions.forEach(t => makeTower(t.x, t.z, t.n));
+STEP(7, '8 towers OK');
+
+// ============== INTERNAL ROAD (loop) ==============
+const ringPts = [];
+for(let i = 0; i <= 64; i++){
+  const a = (i/64) * Math.PI*2;
+  ringPts.push(new THREE.Vector3(-25 + 75*Math.cos(a), 0.15, 80*Math.sin(a)));
+}
+const tubeGeom = new THREE.TubeGeometry(
+  new THREE.CatmullRomCurve3(ringPts, true), 100, 4, 4, true
+);
+const ringRoad = new THREE.Mesh(tubeGeom, asphaltMat);
+ringRoad.position.y = 0.2;
+ringRoad.receiveShadow = true;
+scene.add(ringRoad);
+
+// ============== MARINA ==============
+const boardwalk = new THREE.Mesh(
+  new THREE.BoxGeometry(6, 1, 200),
+  dockMat
+);
+boardwalk.position.set(150, 0.7, 0);
+boardwalk.castShadow = true; boardwalk.receiveShadow = true;
+scene.add(boardwalk);
+
+for(let i = 0; i < 6; i++){
+  const dock = new THREE.Mesh(new THREE.BoxGeometry(60, 0.6, 4), dockMat);
+  dock.position.set(180, 0.5, -75 + i*30);
+  dock.castShadow = true; dock.receiveShadow = true;
+  scene.add(dock);
+
+  for(let b = 0; b < 2; b++){
+    const boatColor = [0xffffff, 0xfff5d0, 0xe8f4ff, 0xffe8e8][Math.floor(Math.random()*4)];
+    const hull = new THREE.Mesh(
+      new THREE.BoxGeometry(7, 2.5, 18),
+      new THREE.MeshStandardMaterial({color: boatColor, roughness: 0.4, metalness: 0.1})
+    );
+    hull.position.set(190 + b*20, 1.5, -75 + i*30 + 8);
+    hull.castShadow = true;
+    scene.add(hull);
+    const cabin = new THREE.Mesh(
+      new THREE.BoxGeometry(5, 2, 7),
+      new THREE.MeshStandardMaterial({color: 0xeeeeee, roughness: 0.5})
+    );
+    cabin.position.set(190 + b*20, 3.5, -75 + i*30 + 9);
+    cabin.castShadow = true;
+    scene.add(cabin);
+  }
+}
+
+// ============== ROADS AROUND SITE ==============
+const tamDaRoad = new THREE.Mesh(new THREE.PlaneGeometry(14, 800), asphaltMat);
+tamDaRoad.rotation.x = -Math.PI/2;
+tamDaRoad.position.set(-180, 0.1, 0);
+tamDaRoad.receiveShadow = true;
+scene.add(tamDaRoad);
+
+const laneMat = new THREE.MeshBasicMaterial({color: 0xffffff});
+for(let z = -380; z < 380; z += 20){
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 8), laneMat);
+  m.rotation.x = -Math.PI/2;
+  m.position.set(-180, 0.15, z);
+  scene.add(m);
+}
+
+const expressway = new THREE.Mesh(new THREE.BoxGeometry(900, 4, 30), asphaltMat);
+expressway.position.set(0, 5, 200);
+expressway.castShadow = true; expressway.receiveShadow = true;
+scene.add(expressway);
+
+for(let x = -400; x <= 400; x += 80){
+  const pillar = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 3, 6), concrete);
+  pillar.position.set(x, 3, 200);
+  pillar.castShadow = true;
+  scene.add(pillar);
+}
+
+for(let x = -440; x < 440; x += 18){
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(8, 0.4), laneMat);
+  m.rotation.x = -Math.PI/2;
+  m.position.set(x, 7.05, 195);
+  scene.add(m);
+  const m2 = new THREE.Mesh(new THREE.PlaneGeometry(8, 0.4), laneMat);
+  m2.rotation.x = -Math.PI/2;
+  m2.position.set(x, 7.05, 205);
+  scene.add(m2);
+}
+
+// ============== TREES (InstancedMesh) ==============
+function plantTrees(){
+  const trunkGeom = new THREE.CylinderGeometry(0.3, 0.5, 4);
+  const trunkMat = new THREE.MeshStandardMaterial({color: 0x5a3a1f, roughness: 0.9});
+  const leafGeom = new THREE.ConeGeometry(2.5, 6, 7);
+  const leafMat = new THREE.MeshStandardMaterial({color: 0x3a6a3a, roughness: 0.8});
+
+  const trunks = new THREE.InstancedMesh(trunkGeom, trunkMat, 600);
+  const leaves = new THREE.InstancedMesh(leafGeom, leafMat, 600);
+  trunks.castShadow = leaves.castShadow = true;
+
+  const dummy = new THREE.Object3D();
+  let idx = 0;
+  function place(x, z, scale = 1){
+    if (idx >= 600) return;
+    dummy.position.set(x, 2*scale, z);
+    dummy.scale.setScalar(0.7 + Math.random()*0.6);
+    dummy.rotation.y = Math.random()*Math.PI*2;
+    dummy.updateMatrix();
+    trunks.setMatrixAt(idx, dummy.matrix);
+    dummy.position.y = 6*scale;
+    dummy.updateMatrix();
+    leaves.setMatrixAt(idx, dummy.matrix);
+    idx++;
+  }
+
+  for(let i = 0; i < 80; i++) place(-400 + Math.random()*800, -250 + Math.random()*40);
+  for(let i = 0; i < 80; i++) place(125 + Math.random()*15, -380 + Math.random()*760);
+  for(let i = 0; i < 40; i++) place(-220 + Math.random()*15, -380 + Math.random()*760);
+  const innerPositions = [
+    [-50, -30], [-50, 30], [-10, -40], [-10, 40], [25, 0], [-100, 30], [-100, -30]
+  ];
+  innerPositions.forEach(p => {
+    for(let i = 0; i < 5; i++){
+      place(p[0] + (Math.random()-0.5)*15, p[1] + (Math.random()-0.5)*15, 0.7);
+    }
+  });
+  for(let i = 0; i < 60; i++) place(-180 + Math.random()*360, 110 + Math.random()*70);
+  for(let i = 0; i < 200; i++){
+    const dist = 350 + Math.random()*400;
+    const ang = Math.random()*Math.PI*2;
+    place(Math.cos(ang)*dist, Math.sin(ang)*dist);
+  }
+
+  trunks.count = idx; leaves.count = idx;
+  trunks.instanceMatrix.needsUpdate = true;
+  leaves.instanceMatrix.needsUpdate = true;
+  scene.add(trunks); scene.add(leaves);
+}
+STEP(8, 'Trồng 600 cây (InstancedMesh)');
+plantTrees();
+STEP(9, 'Cây OK');
+
+// ============== AMENITIES ==============
+const clubhouse = new THREE.Mesh(
+  new THREE.BoxGeometry(50, 8, 24),
+  new THREE.MeshStandardMaterial({color: 0xb8a888, roughness: 0.6})
+);
+clubhouse.position.set(50, 4, 0);
+clubhouse.castShadow = true;
+scene.add(clubhouse);
+
+const clubGlass = new THREE.Mesh(
+  new THREE.BoxGeometry(48, 1, 22),
+  greenGlass
+);
+clubGlass.position.set(50, 8.5, 0);
+scene.add(clubGlass);
+
+// ============== ANIMATED CARS ==============
+const cars = [];
+function makeCar(color){
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(2, 1.2, 4.5),
+    new THREE.MeshStandardMaterial({color, roughness: 0.4, metalness: 0.3})
+  );
+  body.position.y = 0.8;
+  body.castShadow = true;
+  g.add(body);
+  const top = new THREE.Mesh(
+    new THREE.BoxGeometry(1.7, 0.9, 2.5),
+    new THREE.MeshStandardMaterial({color, roughness: 0.4})
+  );
+  top.position.y = 1.7;
+  g.add(top);
+  const hl = new THREE.Mesh(
+    new THREE.SphereGeometry(0.2, 6, 6),
+    new THREE.MeshBasicMaterial({color: 0xffffaa})
+  );
+  hl.position.set(0.6, 0.9, 2.2); g.add(hl);
+  const hl2 = hl.clone(); hl2.position.x = -0.6; g.add(hl2);
+  return g;
+}
+const carColors = [0xffffff, 0xc0392b, 0x2c3e50, 0x16a085, 0xf39c12, 0x000000, 0x95a5a6];
+for(let i = 0; i < 18; i++){
+  const car = makeCar(carColors[i % carColors.length]);
+  car.position.set(-440 + Math.random()*880, 7.1, 195 + (i%2)*10);
+  car.userData.speed = 0.8 + Math.random()*0.6;
+  car.userData.direction = (i%2 === 0) ? 1 : -1;
+  if (car.userData.direction < 0) car.rotation.y = Math.PI;
+  scene.add(car);
+  cars.push(car);
+}
+
+// ============== CAMERA VIEWS ==============
+const views = {
+  aerial_sw: {pos:[-380, 280, 380],   tgt:[-20, 30, 0]},
+  aerial_top: {pos:[-20, 600, 0.1],   tgt:[-20, 0, 0]},
+  aerial_e:   {pos:[400, 180, 100],   tgt:[100, 20, 0]},
+  aerial_s:   {pos:[0, 220, 500],     tgt:[-20, 30, 0]},
+  aerial_se_night: {pos:[380, 250, 380], tgt:[-20, 30, 0]},
+  ground:     {pos:[-30, 8, 0],       tgt:[20, 8, 0]}
+};
+window.setView = (key) => {
+  const v = views[key];
+  if (!v) return;
+  const startPos = camera.position.clone();
+  const startTgt = controls.target.clone();
+  const endPos = new THREE.Vector3(...v.pos);
+  const endTgt = new THREE.Vector3(...v.tgt);
+  const dur = 1100;
+  const t0 = performance.now();
+  function step(){
+    const t = Math.min(1, (performance.now() - t0) / dur);
+    const e = 1 - Math.pow(1 - t, 3);
+    camera.position.lerpVectors(startPos, endPos, e);
+    controls.target.lerpVectors(startTgt, endTgt, e);
+    controls.update();
+    if (t < 1) requestAnimationFrame(step);
+  }
+  step();
+  if (key === 'aerial_se_night') {
+    document.getElementById('time-slider').value = 90;
+    onTimeChange();
+  }
+};
+
+// ============== TIME SLIDER ==============
+const slider = document.getElementById('time-slider');
+const timeLabel = document.getElementById('time-label');
+
+function onTimeChange(){
+  const t = parseFloat(slider.value) / 100;
+  updateSun(t);
+  const elev = sunPos.y;
+  const nightAmt = elev < 0.05 ? Math.min(1, (0.05 - elev) * 8) : 0;
+  scene.traverse(obj => {
+    if (obj.userData.isNightGlow) {
+      obj.material.opacity = nightAmt * 0.45;
+    }
+  });
+  const hours = Math.floor(t * 24);
+  const mins = Math.floor((t * 24 - hours) * 60);
+  const period = hours < 12 ? 'sáng' : (hours < 18 ? 'chiều' : 'tối');
+  timeLabel.textContent = `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')} ${period}`;
+}
+slider.addEventListener('input', onTimeChange);
+onTimeChange();
+
+// ============== ANIMATION LOOP ==============
+let lastT = performance.now();
+let frames = 0, fpsTimer = lastT;
+const fpsEl = document.getElementById('fps');
+
+function animate(now){
+  const dt = Math.min((now - lastT) / 1000, 0.1);
+  lastT = now;
+  frames++;
+  if (now - fpsTimer > 500) {
+    fpsEl.textContent = `FPS: ${Math.round(frames * 1000 / (now - fpsTimer))}`;
+    frames = 0; fpsTimer = now;
+  }
+
+  // Animate water normal maps for flowing water effect
+  scene.traverse(obj => {
+    if (obj.userData.isAnimWater && obj.material.normalMap) {
+      obj.material.normalMap.offset.x += obj.userData.flowSpeed.x * dt;
+      obj.material.normalMap.offset.y += obj.userData.flowSpeed.y * dt;
+    }
+  });
+
+  cars.forEach(c => {
+    c.position.x += c.userData.speed * c.userData.direction * dt * 12;
+    if (c.userData.direction > 0 && c.position.x > 460) c.position.x = -460;
+    if (c.userData.direction < 0 && c.position.x < -460) c.position.x = 460;
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+STEP(10, 'Bắt đầu animation loop');
+// Force hide loading (in case the early hide didn't work)
+document.getElementById('loading').style.display = 'none';
+document.querySelectorAll('.panel').forEach(p => p.classList.remove('hidden'));
+requestAnimationFrame(animate);
+STEP(11, '✓ Sa bàn sẵn sàng!');
+
+} catch(err) {
+  console.error('Scene init error:', err);
+  // Force show loading screen with error
+  const lo = document.getElementById('loading');
+  lo.style.display = 'flex';
+  logStatus('❌ LỖI: ' + err.message, 'err');
+  logStatus(err.stack || '(no stack)', 'err');
+}
+}
+</script>
+</body>
+</html>

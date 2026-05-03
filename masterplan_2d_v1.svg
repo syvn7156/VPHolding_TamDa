@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 720" xmlns="http://www.w3.org/2000/svg" style="font-family:'Inter',sans-serif">
+  <title>Mặt bằng tổng thể concept — Resort 300ha với 8 chung cư + bến thuyền</title>
+  <desc>Phác thảo top-down: 8 tháp chung cư bố trí cong hướng biển ở phía nam, marina + bãi tắm ven bờ, hồ bơi và clubhouse trung tâm, công viên cây xanh hai bên, lối vào chính phía bắc.</desc>
+
+  <defs>
+    <pattern id="water" patternUnits="userSpaceOnUse" width="20" height="20">
+      <rect width="20" height="20" fill="#cfe8f3"/>
+      <path d="M0 10 Q5 6 10 10 T20 10" stroke="#9ec8db" fill="none" stroke-width="0.8"/>
+    </pattern>
+    <pattern id="grass" patternUnits="userSpaceOnUse" width="14" height="14">
+      <rect width="14" height="14" fill="#dbeac0"/>
+      <circle cx="3" cy="3" r="0.8" fill="#a8c47a"/>
+      <circle cx="9" cy="8" r="0.8" fill="#a8c47a"/>
+      <circle cx="6" cy="11" r="0.8" fill="#a8c47a"/>
+    </pattern>
+    <pattern id="sand" patternUnits="userSpaceOnUse" width="10" height="10">
+      <rect width="10" height="10" fill="#f4e8c8"/>
+      <circle cx="3" cy="3" r="0.4" fill="#d4be88"/>
+      <circle cx="7" cy="6" r="0.4" fill="#d4be88"/>
+    </pattern>
+  </defs>
+
+  <g transform="translate(940,40)">
+    <circle r="22" fill="#fff" stroke="#333" stroke-width="1"/>
+    <polygon points="0,-18 5,0 0,-4 -5,0" fill="#c0392b"/>
+    <polygon points="0,18 5,0 0,4 -5,0" fill="#333"/>
+    <text y="-26" text-anchor="middle" font-size="11" font-weight="700">N</text>
+  </g>
+
+  <g transform="translate(20,20)">
+    <text font-size="18" font-weight="800" fill="#1a3a5c">VP HOLDING — RESORT 300 ha (Concept v1)</text>
+    <text y="20" font-size="11" fill="#555">Mặt bằng tổng thể (Master Site Plan) · 8 chung cư + bến thuyền + tiện ích · Tỷ lệ phác thảo</text>
+  </g>
+
+  <rect x="40" y="70" width="920" height="600" fill="url(#grass)" stroke="#2c3e50" stroke-width="2.5" stroke-dasharray="8 4"/>
+  <text x="50" y="90" font-size="10" font-weight="600" fill="#2c3e50">Ranh đất (Site Boundary): ~300 ha · ~1.7 × 1.7 km</text>
+
+  <rect x="40" y="560" width="920" height="110" fill="url(#water)"/>
+  <text x="500" y="660" text-anchor="middle" font-size="14" font-weight="700" fill="#1a5a7a" opacity="0.7">BIỂN / HỒ (Sea / Lake)</text>
+
+  <rect x="60" y="540" width="880" height="22" fill="url(#sand)"/>
+  <text x="500" y="556" text-anchor="middle" font-size="9" font-weight="600" fill="#7a6020">Bãi tắm + Đường dạo bộ (Beach + Promenade) · ~3.5 ha</text>
+
+  <g>
+    <path d="M 380 540 L 380 600 L 620 600 L 620 540 Z" fill="url(#water)" stroke="#1a5a7a" stroke-width="1.5"/>
+    <rect x="395" y="545" width="3" height="50" fill="#8b6f47"/>
+    <rect x="425" y="545" width="3" height="50" fill="#8b6f47"/>
+    <rect x="455" y="545" width="3" height="50" fill="#8b6f47"/>
+    <rect x="485" y="545" width="3" height="50" fill="#8b6f47"/>
+    <rect x="515" y="545" width="3" height="50" fill="#8b6f47"/>
+    <rect x="545" y="545" width="3" height="50" fill="#8b6f47"/>
+    <rect x="575" y="545" width="3" height="50" fill="#8b6f47"/>
+    <rect x="605" y="545" width="3" height="50" fill="#8b6f47"/>
+    <ellipse cx="408" cy="560" rx="6" ry="2.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    <ellipse cx="438" cy="575" rx="7" ry="2.8" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    <ellipse cx="468" cy="565" rx="6" ry="2.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    <ellipse cx="498" cy="580" rx="8" ry="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    <ellipse cx="528" cy="560" rx="7" ry="2.8" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    <ellipse cx="558" cy="572" rx="6" ry="2.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    <ellipse cx="588" cy="568" rx="7" ry="2.8" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    <text x="500" y="535" text-anchor="middle" font-size="11" font-weight="800" fill="#1a3a5c">MARINA · BẾN THUYỀN (~12 ha · 80 slip)</text>
+  </g>
+
+  <g font-size="11" font-weight="800" fill="#fff" text-anchor="middle">
+    <g>
+      <rect x="100" y="430" width="55" height="55" fill="#e67e22" stroke="#a0501a" stroke-width="1.5" rx="2"/>
+      <text x="127" y="463">T1</text>
+      <text x="127" y="500" font-size="8" font-weight="600" fill="#333">35 tầng</text>
+    </g>
+    <g>
+      <rect x="200" y="430" width="55" height="55" fill="#e67e22" stroke="#a0501a" stroke-width="1.5" rx="2"/>
+      <text x="227" y="463">T2</text>
+      <text x="227" y="500" font-size="8" font-weight="600" fill="#333">35 tầng</text>
+    </g>
+    <g>
+      <rect x="745" y="430" width="55" height="55" fill="#e67e22" stroke="#a0501a" stroke-width="1.5" rx="2"/>
+      <text x="772" y="463">T3</text>
+      <text x="772" y="500" font-size="8" font-weight="600" fill="#333">35 tầng</text>
+    </g>
+    <g>
+      <rect x="845" y="430" width="55" height="55" fill="#e67e22" stroke="#a0501a" stroke-width="1.5" rx="2"/>
+      <text x="872" y="463">T4</text>
+      <text x="872" y="500" font-size="8" font-weight="600" fill="#333">35 tầng</text>
+    </g>
+    <g>
+      <rect x="100" y="280" width="55" height="55" fill="#d35400" stroke="#7a3c0f" stroke-width="1.5" rx="2"/>
+      <text x="127" y="313">T5</text>
+      <text x="127" y="350" font-size="8" font-weight="600" fill="#333">28 tầng</text>
+    </g>
+    <g>
+      <rect x="200" y="280" width="55" height="55" fill="#d35400" stroke="#7a3c0f" stroke-width="1.5" rx="2"/>
+      <text x="227" y="313">T6</text>
+      <text x="227" y="350" font-size="8" font-weight="600" fill="#333">28 tầng</text>
+    </g>
+    <g>
+      <rect x="745" y="280" width="55" height="55" fill="#d35400" stroke="#7a3c0f" stroke-width="1.5" rx="2"/>
+      <text x="772" y="313">T7</text>
+      <text x="772" y="350" font-size="8" font-weight="600" fill="#333">28 tầng</text>
+    </g>
+    <g>
+      <rect x="845" y="280" width="55" height="55" fill="#d35400" stroke="#7a3c0f" stroke-width="1.5" rx="2"/>
+      <text x="872" y="313">T8</text>
+      <text x="872" y="350" font-size="8" font-weight="600" fill="#333">28 tầng</text>
+    </g>
+  </g>
+
+  <g>
+    <rect x="430" y="380" width="140" height="60" fill="#9b59b6" stroke="#5e2e72" stroke-width="1.5" rx="3"/>
+    <text x="500" y="408" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">CLUBHOUSE</text>
+    <text x="500" y="425" text-anchor="middle" font-size="9" fill="#fff">Spa · Gym · Yoga</text>
+    <ellipse cx="500" cy="475" rx="80" ry="22" fill="#3498db" stroke="#1f6391" stroke-width="1.5"/>
+    <text x="500" y="478" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">HỒ BƠI (Pool ~0.5 ha)</text>
+    <rect x="370" y="180" width="260" height="60" fill="#e74c3c" stroke="#922b21" stroke-width="1.5" rx="3"/>
+    <text x="500" y="208" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">RETAIL · F&amp;B PLAZA</text>
+    <text x="500" y="226" text-anchor="middle" font-size="9" fill="#fff">Siêu thị · Nhà hàng · Café · ~2 ha</text>
+    <rect x="100" y="180" width="180" height="70" fill="#27ae60" stroke="#145a32" stroke-width="1.5" rx="3"/>
+    <text x="190" y="210" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">SPORTS ZONE</text>
+    <text x="190" y="226" text-anchor="middle" font-size="9" fill="#fff">Tennis · Bóng đá mini</text>
+    <text x="190" y="240" text-anchor="middle" font-size="9" fill="#fff">~3 ha</text>
+    <rect x="720" y="180" width="180" height="70" fill="#16a085" stroke="#0b5345" stroke-width="1.5" rx="3"/>
+    <text x="810" y="210" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">WELLNESS CENTER</text>
+    <text x="810" y="226" text-anchor="middle" font-size="9" fill="#fff">Phòng khám · Medical Spa</text>
+    <text x="810" y="240" text-anchor="middle" font-size="9" fill="#fff">~2 ha (Ánh Dương model)</text>
+  </g>
+
+  <g stroke="#7f8c8d" stroke-width="6" fill="none" opacity="0.5">
+    <path d="M 500 95 L 500 170"/>
+    <path d="M 80 270 L 920 270" stroke-width="5"/>
+    <path d="M 80 360 L 920 360" stroke-width="5"/>
+    <path d="M 80 510 L 920 510" stroke-width="5"/>
+    <path d="M 80 110 L 80 540"/>
+    <path d="M 920 110 L 920 540"/>
+  </g>
+
+  <g>
+    <polygon points="490,72 510,72 515,95 485,95" fill="#34495e"/>
+    <text x="500" y="60" text-anchor="middle" font-size="11" font-weight="800" fill="#1a3a5c">CỔNG CHÍNH (Main Entry)</text>
+  </g>
+
+  <g fill="#27ae60" opacity="0.7">
+    <circle cx="65" cy="120" r="5"/><circle cx="65" cy="160" r="5"/><circle cx="65" cy="350" r="5"/><circle cx="65" cy="400" r="5"/><circle cx="65" cy="450" r="5"/>
+    <circle cx="935" cy="120" r="5"/><circle cx="935" cy="160" r="5"/><circle cx="935" cy="350" r="5"/><circle cx="935" cy="400" r="5"/><circle cx="935" cy="450" r="5"/>
+    <circle cx="320" cy="100" r="4"/><circle cx="350" cy="105" r="4"/><circle cx="650" cy="100" r="4"/><circle cx="680" cy="105" r="4"/>
+    <circle cx="320" cy="525" r="4"/><circle cx="680" cy="525" r="4"/>
+  </g>
+
+  <text x="190" y="120" text-anchor="middle" font-size="10" font-weight="700" fill="#1a5a30">CÔNG VIÊN BẮC (North Park ~5ha)</text>
+  <text x="810" y="120" text-anchor="middle" font-size="10" font-weight="700" fill="#1a5a30">CÔNG VIÊN ĐÔNG (East Park ~5ha)</text>
+
+  <g transform="translate(50,690)" font-size="10">
+    <text x="0" y="0" font-weight="800" fill="#1a3a5c">CHÚ THÍCH (Legend):</text>
+    <rect x="120" y="-8" width="14" height="10" fill="#e67e22"/><text x="138" y="0">Tower hướng biển (35F)</text>
+    <rect x="280" y="-8" width="14" height="10" fill="#d35400"/><text x="298" y="0">Tower phía sau (28F)</text>
+    <rect x="430" y="-8" width="14" height="10" fill="#9b59b6"/><text x="448" y="0">Clubhouse</text>
+    <rect x="530" y="-8" width="14" height="10" fill="#e74c3c"/><text x="548" y="0">Retail/F&amp;B</text>
+    <rect x="630" y="-8" width="14" height="10" fill="#16a085"/><text x="648" y="0">Wellness</text>
+    <rect x="720" y="-8" width="14" height="10" fill="#3498db"/><text x="738" y="0">Hồ bơi/Marina</text>
+    <rect x="830" y="-8" width="14" height="10" fill="url(#grass)"/><text x="848" y="0">Cây xanh</text>
+  </g>
+
+  <g transform="translate(50,712)">
+    <rect x="0" y="-4" width="100" height="6" fill="#fff" stroke="#333"/>
+    <rect x="0" y="-4" width="50" height="6" fill="#333"/>
+    <text x="0" y="14" font-size="9">0</text>
+    <text x="48" y="14" font-size="9">~500 m</text>
+    <text x="95" y="14" font-size="9">1 km</text>
+  </g>
+</svg>

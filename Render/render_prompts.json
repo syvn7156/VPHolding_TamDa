@@ -1,0 +1,64 @@
+{
+  "project": "Phúc Thịnh Tam Đa — 3.71 ha",
+  "version": "v5",
+  "instructions": "Render 5 ảnh 8K aerial theo đúng layout thực tế từ Google Maps satellite.",
+  "site_context": {
+    "north": "Kênh Ông Thảo (canal nhỏ) + đất nông nghiệp + cây xanh rậm",
+    "south": "Cao tốc DCT Bắc-Nam Phía Đông (chạy Đông-Tây) + nút giao",
+    "east": "Sông Tắc (sông rộng, chảy Bắc-Nam) — đây là mặt view chính + vị trí marina",
+    "west": "Đường Tam Đa (chạy Bắc-Nam) + Depot Vinbus Thủ Đức + nhà dân thưa",
+    "site_shape": "Hình thang/tam giác bất quy tắc — RỘNG phía Bắc, HẸP dần về phía Nam (nơi đường Tam Đa và Sông Tắc gần nhau tại nút giao cao tốc)",
+    "total_area": "37,142 m² (3.71 ha)",
+    "tower_count": "8-10 tháp",
+    "tower_height": "30 tầng",
+    "tower_arrangement": "Xếp hình oval/vòng cung theo hình dạng khu đất, mở hướng ra Sông Tắc (Đông)",
+    "tower_facade": "Kính xanh ngọc (green-tinted glass) + thanh gỗ nâu dọc (brown wood vertical panels)",
+    "central_amenity": "Hồ bơi lagoon hình hữu cơ (organic kidney shape) ở trung tâm cụm tháp + vườn cảnh quan",
+    "marina_location": "Phía ĐÔNG, dọc bờ Sông Tắc — cầu tàu nổi + boardwalk gỗ",
+    "road_name": "Đường Tam Đa",
+    "road_position": "TRÁI / TÂY — chạy Bắc-Nam dọc rìa Tây khu đất",
+    "river_name": "Sông Tắc",
+    "river_position": "PHẢI / ĐÔNG — sông rộng, chảy Bắc-Nam dọc rìa Đông khu đất",
+    "expressway": "DCT Bắc-Nam Phía Đông (Cao tốc HCM-Long Thành)",
+    "expressway_position": "DƯỚI / NAM — chạy Đông-Tây, có nút giao gần góc Tây Nam khu đất",
+    "canal_north": "Kênh Ông Thảo — chạy Đông-Tây phía Bắc khu đất",
+    "surrounding": "Đất nông nghiệp xanh, cây xanh rậm ven sông, nhà dân thưa phía Tây, depot xe buýt góc Tây Nam"
+  },
+  "renders": [
+    {
+      "id": "v5_01",
+      "name": "Aerial Bird's Eye — Tổng thể ban ngày",
+      "camera_angle": "45 độ từ phía Tây Nam nhìn lên Đông Bắc (như đứng trên cao tốc nhìn vào)",
+      "lighting": "Sáng, buổi sáng, mây nhẹ",
+      "prompt": "Photorealistic 8K aerial architectural visualization looking from SOUTHWEST toward NORTHEAST at 45 degree angle of a luxury 30-story residential development on a 3.7 hectare TRAPEZOIDAL site (wider at north, narrowing toward south) in Ho Chi Minh City Vietnam. 8-10 residential towers of 30 stories arranged in an OVAL CLUSTER opening toward the east river. Towers have green-tinted glass facades with vertical brown wood panel accents. Central organic-shaped LAGOON POOL surrounded by tropical gardens between the towers. LEFT/WEST side: Duong Tam Da road running north-south with cars and motorbikes, a bus depot visible at the southwest corner. RIGHT/EAST side: the wide Song Tac river flowing north-south with modern floating MARINA pontoon docks and 6-8 luxury yachts, wooden boardwalk promenade along the riverbank. BOTTOM/SOUTH foreground: an elevated EXPRESSWAY (DCT Bac-Nam) running east-west with traffic, interchange visible. TOP/NORTH background: a small canal (Kenh Ong Thao) and lush green agricultural land with tropical trees. Between towers: podium retail, garden terraces, tennis courts, sports facilities. Surrounding area: low-density Vietnamese suburban with scattered houses, green farmland, dense tropical vegetation along the riverbanks. Bright morning light with slight mist over the river. Professional architectural visualization. No text no labels no annotations."
+    },
+    {
+      "id": "v5_02",
+      "name": "Aerial Sunset — Hoàng hôn từ phía Đông (Sông Tắc)",
+      "camera_angle": "45 độ từ phía Đông (trên sông) nhìn về Tây",
+      "lighting": "Hoàng hôn, mặt trời lặn phía Tây sau đường Tam Đa",
+      "prompt": "Photorealistic 8K aerial architectural visualization at dramatic golden sunset. Camera positioned OVER the Song Tac river looking WEST toward the development. FOREGROUND: the wide calm Song Tac river with golden sunset reflections, modern marina with luxury yachts and sailboats docked at floating pontoons, curved wooden boardwalk along the eastern riverbank of the development. MID-GROUND: 8-10 residential towers of 30 stories arranged in oval cluster, with green-tinted glass and brown wood facades catching warm sunset light from behind. Central lagoon pool visible between tower gaps. Podium retail level with warm interior lighting starting to glow. BACKGROUND: Duong Tam Da road visible beyond the western towers with car headlights at dusk, low-rise Vietnamese suburban area, the sun setting behind with dramatic orange purple clouds. The trapezoidal site shape is visible — wider at north (left in this view), narrower at south (right). Dense tropical trees along the riverbank. Cinematic golden hour atmosphere. No text."
+    },
+    {
+      "id": "v5_03",
+      "name": "Aerial Top-Down — Mặt bằng masterplan",
+      "camera_angle": "Nhìn thẳng xuống 90 độ, Bắc ở trên",
+      "lighting": "Trưa nắng, bóng ngắn",
+      "prompt": "Photorealistic 8K top-down masterplan aerial view looking STRAIGHT DOWN at a 3.7 hectare luxury residential development in Ho Chi Minh City Vietnam. North is UP. The site is a TRAPEZOIDAL irregular polygon — WIDER at the top (north), NARROWER at the bottom (south), creating a distinctive tapered shape. 8-10 residential tower rooftops arranged in an OVAL ring pattern in the northern wider portion, surrounding a central LAGOON POOL (organic kidney shape, turquoise water). Towers have flat rooftops with rooftop gardens. LEFT/WEST edge: Duong Tam Da road with parked cars and street trees running north-south. RIGHT/EAST edge: wide Song Tac river with marina dock pontoons and several white boats moored along the eastern bank. BOTTOM/SOUTH: the site narrows toward the expressway, with landscaped park, winding paths, decorative pond, tennis court, children playground. TOP/NORTH: small canal (Kenh Ong Thao) running east-west, green farmland beyond. Between towers: podium connecting towers, internal roads, retail at base. Lush green tropical landscaping throughout. Bright midday sunlight casting short shadows southward. No text no labels no compass."
+    },
+    {
+      "id": "v5_04",
+      "name": "Aerial từ cao tốc — Nhìn từ Nam lên Bắc",
+      "camera_angle": "Từ trên cao tốc phía Nam nhìn lên Bắc",
+      "lighting": "Chiều, ánh sáng ấm",
+      "prompt": "Photorealistic 8K aerial architectural visualization looking from SOUTH toward NORTH. Camera positioned above the expressway looking north at the development. FOREGROUND: the modern elevated DCT Bac-Nam expressway running east-west with cars, trucks and motorbikes in traffic. JUST BEYOND: the narrow southern tip of the trapezoidal 3.7 hectare site with landscaped entrance gardens, arrival boulevard, decorative fountain. MID-GROUND: 8-10 towers of 30 stories with green glass and brown wood facades rising dramatically, arranged in oval cluster that widens toward the north. Central lagoon pool glimpsed between towers. LEFT side: Duong Tam Da road running parallel northward. RIGHT side: the wide Song Tac river with marina docks and yachts visible along the eastern edge. BACKGROUND: the site widens toward the north with more towers and greenery, Kenh Ong Thao canal visible, green agricultural land and low-rise Thu Duc suburban area extending to horizon. Warm afternoon light. The dramatic scale contrast between the 30-story towers and the surrounding low-rise area is emphasized. No text."
+    },
+    {
+      "id": "v5_05",
+      "name": "Aerial Night — Ban đêm cinematic",
+      "camera_angle": "45 độ từ Đông Nam nhìn Tây Bắc",
+      "lighting": "Ban đêm, ánh đèn thành phố, trăng lưỡi liềm",
+      "prompt": "Photorealistic 8K aerial architectural visualization at night. Camera from SOUTHEAST looking NORTHWEST. The 3.7 hectare trapezoidal site glows against the dark surroundings. 8-10 towers of 30 stories arranged in oval cluster, dramatically illuminated with warm golden facade lighting and blue LED vertical accent lines on the brown wood panels. Green-tinted glass reflects city lights. CENTER: the lagoon pool glows turquoise with underwater LED lighting, surrounded by warmly lit garden paths. RIGHT/EAST (foreground): the Song Tac river dark water with marina dock lights and yacht cabin lights reflecting beautifully. LEFT/WEST: Duong Tam Da road with streaming car headlights and red taillights creating light trails. BOTTOM/SOUTH: the expressway with dense traffic light trails running east-west. Podium retail level between tower bases glows warmly with shopfronts. Northern gardens have subtle pathway lighting. Surrounding neighborhood has scattered dim warm lights. Starry night sky with crescent moon above the towers. Premium cinematic luxury atmosphere. No text."
+    }
+  ]
+}
